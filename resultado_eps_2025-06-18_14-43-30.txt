@@ -1,0 +1,24 @@
+Empleados: 1
+Endpoints estimados: 1
+
+High Volume Core Systems: 1 x 300 EPS por Dispositivo = 300.00 EPS
+Medium Volume Core Systems: 1 x 75 EPS por Dispositivo = 75.00 EPS
+Typical Security Infrastructure: 1 x 45 EPS por Dispositivo = 45.00 EPS
+Authentication Solutions: 1 x 20 EPS por Dispositivo = 20.00 EPS
+Network Service Solutions: 1 x 50 EPS por Dispositivo = 50.00 EPS
+IaaS/PaaS Solutions: 1 x 0.5 EPS por Empleado/Endpoint = 0.50 EPS
+Core SaaS Solutions: 1 x 0.2 EPS por Empleado/Endpoint = 0.20 EPS
+Anti-Malware Solutions: 1 x 0.05 EPS por Empleado/Endpoint = 0.05 EPS
+Encryption Solutions: 1 x 40 EPS por Dispositivo = 40.00 EPS
+Web/Mail Servers Logging: 1 x 20 EPS por Dispositivo = 20.00 EPS
+Inventory Management Solutions: 1 x 20 EPS por Dispositivo = 20.00 EPS
+HIPS & Deception Solutions: 1 x 10 EPS por Dispositivo = 10.00 EPS
+Edge SaaS Solutions: 1 x 0.1 EPS por Empleado/Endpoint = 0.10 EPS
+Database Servers Logging: 1 x 10 EPS por Dispositivo = 10.00 EPS
+Windows Servers Logging: 1 x 4 EPS por Dispositivo = 4.00 EPS
+Linux Servers Logging: 1 x 2 EPS por Dispositivo = 2.00 EPS
+Workstation Endpoints/Hosts Logging: 1 x 0.25 EPS por Empleado/Endpoint = 0.25 EPS
+Network IDS/IPS/NSM: 1 x 750 EPS por Dispositivo = 750.00 EPS
+
+EPS estimado base: 1347.10
+EPS recomendado (+35%): 1818 EPS
