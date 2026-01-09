@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 import os
 import re
 import io
@@ -16,11 +16,11 @@ import pandas as pd
 import concurrent.futures
 import streamlit as st
 
-APP_NAME = "INSSIDE â€¢ IPRadar"
+APP_NAME = "INSSIDE • IPRadar"
 APP_VER = "2025.11"
 HEUR_VER = "1.3"
 
-st.set_page_config(page_title=APP_NAME, page_icon="ðŸ›°ï¸", layout="wide")
+st.set_page_config(page_title=APP_NAME, page_icon="🛰️", layout="wide")
 
 # =============== Seguridad: directorios con permisos restrictivos ===============
 def _safe_mkdir(path):
@@ -36,7 +36,7 @@ CDN_LISTS_DIR = os.path.join(CACHE_DIR, "cdn_ranges")
 RUNS_DIR = os.path.join(CACHE_DIR, "runs")
 _safe_mkdir(CACHE_DIR); _safe_mkdir(CDN_LISTS_DIR); _safe_mkdir(RUNS_DIR)
 
-# =============== ParÃ¡metros (ENV) ===============
+# =============== Parámetros (ENV) ===============
 MAX_FILE_BYTES      = int(os.getenv("MAX_FILE_BYTES", str(5 * 1024 * 1024)))
 MAX_LINES           = int(os.getenv("MAX_LINES", "100000"))
 MAX_LINE_LEN        = int(os.getenv("MAX_LINE_LEN", "2048"))
@@ -52,7 +52,7 @@ READONLY = os.getenv("READONLY_NETWORK", "false").lower() == "true"
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
 # =============== BLOQUE LOGO ROBUSTO (extremo derecho topbar) ===============
-LOGO_FORCE_PATH = ""  # Setea ruta absoluta si querÃ©s forzarla.
+LOGO_FORCE_PATH = ""  # Setea ruta absoluta si querés forzarla.
 
 def find_logo_path() -> str:
     if LOGO_FORCE_PATH and os.path.exists(LOGO_FORCE_PATH):
@@ -82,7 +82,7 @@ if not LOGO_B64:
         os.path.abspath(os.path.join("assets", "logo_insside.png")),
         os.path.abspath(os.path.join("static", "logo_insside.png")),
     ]
-    diag_html = f'<div style="color:#ff9f9f;font-size:.85rem;padding:4px 8px;">Logo no encontrado<br><small>ProbÃ© en:<br>{"<br>".join(search_paths)}</small></div>'
+    diag_html = f'<div style="color:#ff9f9f;font-size:.85rem;padding:4px 8px;">Logo no encontrado<br><small>Probé en:<br>{"<br>".join(search_paths)}</small></div>'
 
 logo_html = ""
 if LOGO_B64:
@@ -242,7 +242,7 @@ def asn_lookup_http(ip: str, timeout: float = 6.0) -> Optional[Dict[str, str]]:
     row = with_retries(asn_via_bgpview, ip, timeout=timeout)
     return row or with_retries(asn_via_ipwhois, ip, timeout=timeout)
 
-# =============== CDN heurÃ­sticas ===============
+# =============== CDN heurísticas ===============
 CDN_SOURCES = {
     "Cloudflare": {
         "ipv4": "https://www.cloudflare.com/ips-v4",
@@ -307,7 +307,7 @@ def _valid_cidr_list(lst):
 
 def refresh_cdn_ranges() -> Dict[str, Dict]:
     if READONLY:
-        st.warning("Modo solo lectura de red: actualizaciÃ³n de listas deshabilitada.")
+        st.warning("Modo solo lectura de red: actualización de listas deshabilitada.")
         return load_cdn_ranges()
 
     data: Dict[str, Dict] = {}
@@ -446,7 +446,7 @@ html, body, .stApp{{ font-family:'Inter', system-ui, -apple-system, Segoe UI, Ro
 </style>
 
 <div class="topbar">
-  <span class="title">ðŸ›°ï¸ {APP_NAME}</span>
+  <span class="title">🛰️ {APP_NAME}</span>
   <div class="right">
     <div class="logo-slot">
       {logo_html if logo_html else diag_html}
@@ -458,16 +458,16 @@ html, body, .stApp{{ font-family:'Inter', system-ui, -apple-system, Segoe UI, Ro
 # =============== Cabecera ===============
 c_header = st.container()
 with c_header:
-    st.markdown('<div class="section"><h2 style="margin:0">Carga y parÃ¡metros</h2><p class="small">IP/Host â†’ ASN usando APIs HTTP + heurÃ­sticas de DNS/CDN</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section"><h2 style="margin:0">Carga y parámetros</h2><p class="small">IP/Host → ASN usando APIs HTTP + heurísticas de DNS/CDN</p></div>', unsafe_allow_html=True)
 
 left, right = st.columns([3, 2], gap="large")
 
-# =============== Panel izquierdo: carga, preview y deduplicaciÃ³n ===============
+# =============== Panel izquierdo: carga, preview y deduplicación ===============
 entries: List[str] = []
 raw_lines: List[str] = []
 
 with left:
-    st.subheader("Sube un .txt con IPs o dominios (una por lÃ­nea)")
+    st.subheader("Sube un .txt con IPs o dominios (una por línea)")
     uploaded = st.file_uploader("Arrastra tu archivo o examina", type=["txt"], label_visibility="collapsed")
 
     if uploaded:
@@ -477,15 +477,15 @@ with left:
         raw_lines = content.splitlines()
 
         if len(raw_lines) > MAX_LINES:
-            st.error(f"Demasiadas lÃ­neas (> {MAX_LINES:,}). Reduce el archivo."); st.stop()
+            st.error(f"Demasiadas líneas (> {MAX_LINES:,}). Reduce el archivo."); st.stop()
         if any(len(ln) > MAX_LINE_LEN for ln in raw_lines):
-            st.error("LÃ­neas demasiado largas; posible payload malicioso."); st.stop()
+            st.error("Líneas demasiado largas; posible payload malicioso."); st.stop()
         suspicious = [i for i, ln in enumerate(raw_lines, 1) if ln and not SAFE_LINE_RE.match(ln)]
         if suspicious:
-            st.error(f"Se detectaron {len(suspicious)} lÃ­neas con caracteres invÃ¡lidos. Limpia el archivo."); st.stop()
+            st.error(f"Se detectaron {len(suspicious)} líneas con caracteres inválidos. Limpia el archivo."); st.stop()
 
         show_preview = [ln.strip() for ln in raw_lines[:100]]
-        st.caption(f"Preview (primeras {min(100,len(raw_lines))} lÃ­neas)")
+        st.caption(f"Preview (primeras {min(100,len(raw_lines))} líneas)")
         preview_df = pd.DataFrame(show_preview, columns=["Preview"])
         st.dataframe(preview_df, use_container_width=True, height=200)
 
@@ -503,28 +503,28 @@ with left:
         removed_dups = len(valid_cleaned) - len(entries)
 
         m1, m2, m3, m4 = st.columns(4)
-        m1.metric("LÃ­neas", f"{len(raw_lines):,}")
-        m2.metric("InvÃ¡lidos", f"{len(invalid):,}")
-        m3.metric("VÃ¡lidos Ãºnicos", f"{len(entries):,}")
+        m1.metric("Líneas", f"{len(raw_lines):,}")
+        m2.metric("Inválidos", f"{len(invalid):,}")
+        m3.metric("Válidos únicos", f"{len(entries):,}")
         m4.metric("Duplicados removidos", f"{removed_dups:,}")
         if invalid:
-            st.download_button("Descargar invÃ¡lidos", "\n".join(invalid), "invalidos.txt", "text/plain")
+            st.download_button("Descargar inválidos", "\n".join(invalid), "invalidos.txt", "text/plain")
 
         if len(entries) > MAX_ENTRIES_PER_RUN:
-            st.error(f"MÃ¡ximo permitido: {MAX_ENTRIES_PER_RUN:,} entradas por ejecuciÃ³n."); st.stop()
+            st.error(f"Máximo permitido: {MAX_ENTRIES_PER_RUN:,} entradas por ejecución."); st.stop()
 
-# =============== Panel derecho: parÃ¡metros e inspector ===============
+# =============== Panel derecho: parámetros e inspector ===============
 with right:
-    st.subheader("ParÃ¡metros")
+    st.subheader("Parámetros")
     c1, c2 = st.columns(2)
     threads = c1.slider("Hilos en paralelo", 1, 100, 40, help="Concurrencia del procesamiento")
     timeout = c2.slider("Timeout por consulta (seg)", 1.0, 15.0, 6.0)
-    do_http = st.checkbox("Intentar HEAD HTTP (headers)", value=False, help="AÃ±ade seÃ±ales por headers del borde. MÃ¡s lento.")
+    do_http = st.checkbox("Intentar HEAD HTTP (headers)", value=False, help="Añade señales por headers del borde. Más lento.")
     if READONLY:
         do_http = False
-        st.info("Modo solo lectura de red: HEAD y actualizaciÃ³n de listas deshabilitados.")
+        st.info("Modo solo lectura de red: HEAD y actualización de listas deshabilitados.")
 
-    mode = st.toggle("Modo profundo", help="Aumenta seÃ±ales (HEAD/TLS) y reduce hilos para mejor precisiÃ³n.")
+    mode = st.toggle("Modo profundo", help="Aumenta señales (HEAD/TLS) y reduce hilos para mejor precisión.")
     if mode:
         threads = min(threads, 20)
         timeout = max(timeout, 8.0)
@@ -536,13 +536,13 @@ with right:
         st.success("Listas CDN actualizadas.")
     cdn_db = load_cdn_ranges()
 
-    st.caption("Inspector rÃ¡pido (1 entrada)")
+    st.caption("Inspector rápido (1 entrada)")
     inspector_target = st.text_input("IP/Host")
     inspector_go = st.button("Inspeccionar")
     if inspector_go and inspector_target:
         item_sane = sanitize_entry(inspector_target)
         if not item_sane:
-            st.error("Entrada invÃ¡lida.")
+            st.error("Entrada inválida.")
         else:
             def _inspect(item: str):
                 rows = []
@@ -613,7 +613,7 @@ current_params = {
 prev_params = st.session_state.get("last_params")
 needs_rerun = (prev_params is None) or any(prev_params.get(k) != current_params.get(k) for k in current_params)
 
-run = st.button("Ejecutar anÃ¡lisis", disabled=(not entries) or cooldown_left > 0)
+run = st.button("Ejecutar análisis", disabled=(not entries) or cooldown_left > 0)
 if cooldown_left > 0:
     st.caption(f"Espera {cooldown_left:.1f}s para volver a ejecutar.")
 
@@ -738,12 +738,12 @@ if run and entries:
         for col in ["input","ip"]:
             df[col] = df[col].astype(str)
 
-        # Guardar en sesiÃ³n para persistir
+        # Guardar en sesión para persistir
         st.session_state["results_df"] = df
         st.session_state["results_all_rows"] = results
         st.session_state["last_params"] = current_params
 
-        st.success("Â¡Listo! Resultados generados.")
+        st.success("¡Listo! Resultados generados.")
 
 # =============== Reutilizar resultados si no hay nuevo run ===============
 if df is None and "results_df" in st.session_state and not needs_rerun:
@@ -770,7 +770,7 @@ if df is not None and len(df):
             sel = cols[0].multiselect("CDN", cdns, default=st.session_state.get("flt_sel", []))
             only_unk = cols[1].checkbox("Solo Desconocido", value=st.session_state.get("flt_only_unk", False))
             search = cols[2].text_input("Buscar (ASN/Org/rDNS/Prefijo)", value=st.session_state.get("flt_search",""))
-            limit_rows = cols[3].slider("MÃ¡x. filas a mostrar", 1000, 50000, st.session_state.get("flt_limit", 5000), 500)
+            limit_rows = cols[3].slider("Máx. filas a mostrar", 1000, 50000, st.session_state.get("flt_limit", 5000), 500)
             apply_filters = st.form_submit_button("Aplicar filtros")
 
         # Guardar filtros al aplicar
@@ -804,7 +804,7 @@ if df is not None and len(df):
         import plotly.express as px
         dist = df_view["cdn"].replace(DEF["cdn"], "Sin detectar").value_counts().reset_index()
         dist.columns = ["CDN","Cantidad"]
-        fig = px.pie(dist, values="Cantidad", names="CDN", hole=0.35, title="DistribuciÃ³n por CDN")
+        fig = px.pie(dist, values="Cantidad", names="CDN", hole=0.35, title="Distribución por CDN")
         st.plotly_chart(fig, use_container_width=True)
     except Exception:
         pass
@@ -857,19 +857,19 @@ if df is not None and len(df):
     st.download_button("Guardar proyecto (.ipr)", data=json.dumps(proj).encode("utf-8"),
                        file_name="insside_ipradar.ipr", mime="application/json")
 
-
 # =============== Abrir proyecto ===============
 st.subheader("Abrir proyecto")
-proj_file = st.file_uploader("Cargar .ipr/.json", type=["ipr","json"], key="proj_up")
-if proj_file:
+proj_file = st.file_uploader("Cargar .ipr/.json", type=["","json"], key="proj_up")
+if proj_file:ipr
     try:
         data = json.loads(proj_file.getvalue().decode("utf-8","ignore"))
         st.json({"app": data.get("app"), "ver": data.get("ver"), "params": data.get("params"),
                  "entries_count": data.get("entries_count", 0)})
         if "results" in data:
             dfp = pd.DataFrame(data["results"])
-            st.markdown("Vista rapida del proyecto cargado")
+            st.markdown("Vista rápida del proyecto cargado")
             st.dataframe(dfp.head(200), use_container_width=True, height=300)
+            # Cargar en sesión si querés reutilizar
             st.session_state["results_df"] = dfp.drop_duplicates()
             st.session_state["results_all_rows"] = data["results"]
             st.session_state["last_params"] = None
@@ -877,4 +877,4 @@ if proj_file:
         st.error(f"No se pudo abrir el proyecto: {e}")
 
 # =============== Footer ===============
-st.markdown(f'<div class="footer">INSSIDE  IPRadar v{APP_VER}  Heurísticas {HEUR_VER}</div>', unsafe_allow_html=True)
+st.markdown(f'<div class="footer">INSSIDE • IPRadar v{APP_VER} · Heurísticas {HEUR_VER}</div>', unsafe_allow_html=True)
