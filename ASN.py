@@ -859,8 +859,8 @@ if df is not None and len(df):
 
 # =============== Abrir proyecto ===============
 st.subheader("Abrir proyecto")
-proj_file = st.file_uploader("Cargar .ipr/.json", type=["ipr","json"], key="proj_up")
-if proj_file:
+proj_file = st.file_uploader("Cargar .ipr/.json", type=["","json"], key="proj_up")
+if proj_file:ipr
     try:
         data = json.loads(proj_file.getvalue().decode("utf-8","ignore"))
         st.json({"app": data.get("app"), "ver": data.get("ver"), "params": data.get("params"),
