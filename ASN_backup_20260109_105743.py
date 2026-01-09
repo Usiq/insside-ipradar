@@ -16,7 +16,7 @@ import pandas as pd
 import concurrent.futures
 import streamlit as st
 
-APP_NAME = "INSSIDE €¢ IPRadar"
+APP_NAME = "INSSIDE â€¢ IPRadar"
 APP_VER = "2025.11"
 HEUR_VER = "1.3"
 
@@ -36,7 +36,7 @@ CDN_LISTS_DIR = os.path.join(CACHE_DIR, "cdn_ranges")
 RUNS_DIR = os.path.join(CACHE_DIR, "runs")
 _safe_mkdir(CACHE_DIR); _safe_mkdir(CDN_LISTS_DIR); _safe_mkdir(RUNS_DIR)
 
-# =============== parámetros (ENV) ===============
+# =============== ParÃ¡metros (ENV) ===============
 MAX_FILE_BYTES      = int(os.getenv("MAX_FILE_BYTES", str(5 * 1024 * 1024)))
 MAX_LINES           = int(os.getenv("MAX_LINES", "100000"))
 MAX_LINE_LEN        = int(os.getenv("MAX_LINE_LEN", "2048"))
@@ -458,7 +458,7 @@ html, body, .stApp{{ font-family:'Inter', system-ui, -apple-system, Segoe UI, Ro
 # =============== Cabecera ===============
 c_header = st.container()
 with c_header:
-    st.markdown('<div class="section"><h2 style="margin:0">Carga y parámetros</h2><p class="small">IP/Host †’ ASN usando APIs HTTP + heurÃ­sticas de DNS/CDN</p></div>', unsafe_allow_html=True)
+    st.markdown('<div class="section"><h2 style="margin:0">Carga y parÃ¡metros</h2><p class="small">IP/Host â†’ ASN usando APIs HTTP + heurÃ­sticas de DNS/CDN</p></div>', unsafe_allow_html=True)
 
 left, right = st.columns([3, 2], gap="large")
 
@@ -477,15 +477,15 @@ with left:
         raw_lines = content.splitlines()
 
         if len(raw_lines) > MAX_LINES:
-            st.error(f"Demasiadas líneas (> {MAX_LINES:,}). Reduce el archivo."); st.stop()
+            st.error(f"Demasiadas lÃ­neas (> {MAX_LINES:,}). Reduce el archivo."); st.stop()
         if any(len(ln) > MAX_LINE_LEN for ln in raw_lines):
-            st.error("líneas demasiado largas; posible payload malicioso."); st.stop()
+            st.error("LÃ­neas demasiado largas; posible payload malicioso."); st.stop()
         suspicious = [i for i, ln in enumerate(raw_lines, 1) if ln and not SAFE_LINE_RE.match(ln)]
         if suspicious:
-            st.error(f"Se detectaron {len(suspicious)} líneas con caracteres Inválidos. Limpia el archivo."); st.stop()
+            st.error(f"Se detectaron {len(suspicious)} lÃ­neas con caracteres invÃ¡lidos. Limpia el archivo."); st.stop()
 
         show_preview = [ln.strip() for ln in raw_lines[:100]]
-        st.caption(f"Preview (primeras {min(100,len(raw_lines))} líneas)")
+        st.caption(f"Preview (primeras {min(100,len(raw_lines))} lÃ­neas)")
         preview_df = pd.DataFrame(show_preview, columns=["Preview"])
         st.dataframe(preview_df, use_container_width=True, height=200)
 
@@ -503,23 +503,23 @@ with left:
         removed_dups = len(valid_cleaned) - len(entries)
 
         m1, m2, m3, m4 = st.columns(4)
-        m1.metric("líneas", f"{len(raw_lines):,}")
-        m2.metric("Inválidos", f"{len(invalid):,}")
-        m3.metric("Válidos únicos", f"{len(entries):,}")
+        m1.metric("LÃ­neas", f"{len(raw_lines):,}")
+        m2.metric("InvÃ¡lidos", f"{len(invalid):,}")
+        m3.metric("VÃ¡lidos Ãºnicos", f"{len(entries):,}")
         m4.metric("Duplicados removidos", f"{removed_dups:,}")
         if invalid:
-            st.download_button("Descargar Inválidos", "\n".join(invalid), "invalidos.txt", "text/plain")
+            st.download_button("Descargar invÃ¡lidos", "\n".join(invalid), "invalidos.txt", "text/plain")
 
         if len(entries) > MAX_ENTRIES_PER_RUN:
-            st.error(f"Máximo permitido: {MAX_ENTRIES_PER_RUN:,} entradas por ejecuciÃ³n."); st.stop()
+            st.error(f"MÃ¡ximo permitido: {MAX_ENTRIES_PER_RUN:,} entradas por ejecuciÃ³n."); st.stop()
 
-# =============== Panel derecho: parámetros e inspector ===============
+# =============== Panel derecho: parÃ¡metros e inspector ===============
 with right:
-    st.subheader("parámetros")
+    st.subheader("ParÃ¡metros")
     c1, c2 = st.columns(2)
     threads = c1.slider("Hilos en paralelo", 1, 100, 40, help="Concurrencia del procesamiento")
     timeout = c2.slider("Timeout por consulta (seg)", 1.0, 15.0, 6.0)
-    do_http = st.checkbox("Intentar HEAD HTTP (headers)", value=False, help="AÃ±ade seÃ±ales por headers del borde. más lento.")
+    do_http = st.checkbox("Intentar HEAD HTTP (headers)", value=False, help="AÃ±ade seÃ±ales por headers del borde. MÃ¡s lento.")
     if READONLY:
         do_http = False
         st.info("Modo solo lectura de red: HEAD y actualizaciÃ³n de listas deshabilitados.")
@@ -536,13 +536,13 @@ with right:
         st.success("Listas CDN actualizadas.")
     cdn_db = load_cdn_ranges()
 
-    st.caption("Inspector rápido (1 entrada)")
+    st.caption("Inspector rÃ¡pido (1 entrada)")
     inspector_target = st.text_input("IP/Host")
     inspector_go = st.button("Inspeccionar")
     if inspector_go and inspector_target:
         item_sane = sanitize_entry(inspector_target)
         if not item_sane:
-            st.error("Entrada inválida.")
+            st.error("Entrada invÃ¡lida.")
         else:
             def _inspect(item: str):
                 rows = []
@@ -613,7 +613,7 @@ current_params = {
 prev_params = st.session_state.get("last_params")
 needs_rerun = (prev_params is None) or any(prev_params.get(k) != current_params.get(k) for k in current_params)
 
-run = st.button("Ejecutar análisis", disabled=(not entries) or cooldown_left > 0)
+run = st.button("Ejecutar anÃ¡lisis", disabled=(not entries) or cooldown_left > 0)
 if cooldown_left > 0:
     st.caption(f"Espera {cooldown_left:.1f}s para volver a ejecutar.")
 
@@ -743,7 +743,7 @@ if run and entries:
         st.session_state["results_all_rows"] = results
         st.session_state["last_params"] = current_params
 
-        st.success("¡Listo! Resultados generados.")
+        st.success("Â¡Listo! Resultados generados.")
 
 # =============== Reutilizar resultados si no hay nuevo run ===============
 if df is None and "results_df" in st.session_state and not needs_rerun:
@@ -770,7 +770,7 @@ if df is not None and len(df):
             sel = cols[0].multiselect("CDN", cdns, default=st.session_state.get("flt_sel", []))
             only_unk = cols[1].checkbox("Solo Desconocido", value=st.session_state.get("flt_only_unk", False))
             search = cols[2].text_input("Buscar (ASN/Org/rDNS/Prefijo)", value=st.session_state.get("flt_search",""))
-            limit_rows = cols[3].slider("Máx. filas a mostrar", 1000, 50000, st.session_state.get("flt_limit", 5000), 500)
+            limit_rows = cols[3].slider("MÃ¡x. filas a mostrar", 1000, 50000, st.session_state.get("flt_limit", 5000), 500)
             apply_filters = st.form_submit_button("Aplicar filtros")
 
         # Guardar filtros al aplicar
